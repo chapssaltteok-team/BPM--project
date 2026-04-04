@@ -1,0 +1,37 @@
+# 원본 데이터 (용량 큼 - 직접 공유)
+CMAPSSData/
+
+# 전처리 결과 .npy (용량 큼 - 직접 공유)
+data/processed/
+
+# 모델 가중치
+outputs/models/
+*.pt
+*.pth
+*.pkl
+*.joblib
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# numba 캐시
+__pycache__/
+*.nbi
+*.nbc
