@@ -118,5 +118,29 @@
     "dataset": "FD004",
     "RMSE": 43.9834,
     "NASA_Score": 93165.06
+  },
+  {
+    "model": "CNN",
+    "dataset": "FD001",
+    "RMSE": 20.7247,
+    "NASA_Score": 1989.18
+  },
+  {
+    "model": "CNN",
+    "dataset": "FD002",
+    "RMSE": 19.5935,
+    "NASA_Score": 3506.95
+  },
+  {
+    "model": "CNN",
+    "dataset": "FD003",
+    "RMSE": 23.0696,
+    "NASA_Score": 3056.26
+  },
+  {
+    "model": "CNN",
+    "dataset": "FD004",
+    "RMSE": 21.7097,
+    "NASA_Score": 5914.4
   }
 ]

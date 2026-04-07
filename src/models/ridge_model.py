@@ -43,6 +43,10 @@ def train_ridge(dataset: str):
     best_alpha = model.best_params_['alpha']
     print(f"  최적 alpha: {best_alpha}")
 
+    # ── val 성능 확인 (공통 evaluate_all 사용) ───────────
+    val_pred = model.predict(X_vl)
+    evaluate_all(y_vl, val_pred, model_name='Ridge_val', dataset=dataset, save=False)
+
     # ── 최종 예측 ────────────────────────────────────────
     pred = model.predict(X_te)
     pred = np.clip(pred, 0, 125)  # RUL 범위 제한

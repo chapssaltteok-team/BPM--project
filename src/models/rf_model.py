@@ -44,10 +44,9 @@ def train_rf(dataset: str):
     )
     model.fit(X_tr, y_tr)
 
-    # ── val 성능 확인 ────────────────────────────────────
+    # ── val 성능 확인 (공통 evaluate_all 사용) ───────────
     val_pred = model.predict(X_vl)
-    val_rmse = np.sqrt(np.mean((y_vl - val_pred) ** 2))
-    print(f"  Val RMSE: {val_rmse:.4f}")
+    evaluate_all(y_vl, val_pred, model_name='RF_val', dataset=dataset, save=False)
 
     # ── 피처 중요도 (상위 10개) ──────────────────────────
     importances = model.feature_importances_
