@@ -4,12 +4,12 @@ cnn_model.py
 1D-CNN 기반 RUL 예측
 담당: 안성민
 
-입력 데이터: X_train_seq (N, 30, F) → to_cnn() → (N, F, 30)
+입력 데이터: X_train_seq (N, 30, F) → transpose → (N, F, 30)
 이유: PyTorch Conv1d 입력 형식 = (N, 채널, 길이)
      F(피처)를 채널로, 30(타임스텝)을 길이로 해석
 """
 import numpy as np
-import os, sys
+import os, sys, time, random
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 import torch
@@ -23,6 +23,16 @@ OUTPUT_DIR = 'outputs/predictions'
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# ── Seed 고정 (팀 규칙: seed=42) ─────────────────────────────────────────────
+SEED = 42
+
+def set_seed(seed: int = SEED):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
 
 
 # ── 모델 정의 ─────────────────────────────────────────────────────────────────
@@ -82,6 +92,8 @@ def train_cnn(dataset: str,
               dropout: float   = 0.2,
               patience: int    = 15):
 
+    set_seed(SEED)  # ← seed 고정
+
     print(f"\n{'='*50}\n  1D-CNN — {dataset}\n{'='*50}")
     X_tr, y_tr, X_vl, y_vl, X_te, y_te = load_data(dataset)
 
@@ -98,7 +110,7 @@ def train_cnn(dataset: str,
                            dropout=dropout).to(DEVICE)
     optimizer   = torch.optim.Adam(model.parameters(), lr=lr)
     scheduler   = torch.optim.lr_scheduler.ReduceLROnPlateau(
-                      optimizer, patience=5, factor=0.5, verbose=True)
+                      optimizer, patience=5, factor=0.5)  # verbose=True 제거
     criterion   = nn.MSELoss()
 
     best_val, patience_cnt, best_state = float('inf'), 0, None
@@ -137,9 +149,26 @@ def train_cnn(dataset: str,
                 print(f"  Early Stopping at epoch {epoch}")
                 break
 
-    # ── 최종 예측 ────────────────────────────────────────
+    # ── 추론 시간 측정 (단건 1,000회 평균, 수행계획서 기준) ───
     model.load_state_dict(best_state)
     model.eval()
+
+    single_sample = X_te_t[:1].to(DEVICE)
+    n_repeat = 1000
+
+    with torch.no_grad():
+        for _ in range(10):  # 워밍업
+            _ = model(single_sample)
+
+        start_time = time.time()
+        for _ in range(n_repeat):
+            _ = model(single_sample)
+        total_time = time.time() - start_time
+
+    inference_ms = (total_time / n_repeat) * 1000
+    print(f"  추론 속도: {inference_ms:.4f} ms/sample ({n_repeat}회 평균)")
+
+    # ── 최종 예측 ────────────────────────────────────────
     with torch.no_grad():
         pred = model(X_te_t.to(DEVICE)).cpu().numpy()
     pred = np.clip(pred, 0, 125)
