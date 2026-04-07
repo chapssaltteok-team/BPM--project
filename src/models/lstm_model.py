@@ -189,12 +189,12 @@ def train_lstm(
     print(f"  예측 저장: {out_path}")
 
     # ── 평가 ─────────────────────────────────────────────
-    evaluate_all(y_te, pred, model_name="LSTM", dataset=dataset)
+    evaluate_all(y_te, pred, model_name=f'LSTM_W{window_size}', dataset=dataset)
 
     return model, pred
 
 
 if __name__ == "__main__":
     for ds in DATASETS:
-        train_lstm(ds)
+        train_lstm(ds, window_size=10)
     print("\n모든 데이터셋 LSTM 완료")
