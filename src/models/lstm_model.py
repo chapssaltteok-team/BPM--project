@@ -98,6 +98,7 @@ def to_tensor(*arrays):
 def train_lstm(
     dataset: str,
     window_size: int = 30,
+    tag: str = '',  
     hidden_size: int = 64,
     num_layers: int = 1,
     epochs: int = 50,
@@ -184,7 +185,8 @@ def train_lstm(
     pred = np.clip(pred, 0, 125)
 
     # ── 저장 (W값 포함 파일명) ────────────────────────────
-    out_path = os.path.join(OUTPUT_DIR, f"lstm_W{window_size}_{dataset}.npy")
+    suffix = f'_{tag}' if tag else ''
+    out_path = os.path.join(OUTPUT_DIR, f'lstm_W{window_size}{suffix}_{dataset}.npy')
     np.save(out_path, pred)
     print(f"  예측 저장: {out_path}")
 
@@ -196,5 +198,5 @@ def train_lstm(
 
 if __name__ == "__main__":
     for ds in DATASETS:
-        train_lstm(ds, window_size=10)
+        train_lstm(ds)
     print("\n모든 데이터셋 LSTM 완료")
