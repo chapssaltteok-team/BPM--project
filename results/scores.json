@@ -1,0 +1,122 @@
+[
+  {
+    "model": "LSTM",
+    "dataset": "FD001",
+    "RMSE": 13.7376,
+    "NASA_Score": 266.66
+  },
+  {
+    "model": "LSTM",
+    "dataset": "FD002",
+    "RMSE": 17.0199,
+    "NASA_Score": 1701.13
+  },
+  {
+    "model": "LSTM",
+    "dataset": "FD003",
+    "RMSE": 15.1525,
+    "NASA_Score": 858.44
+  },
+  {
+    "model": "LSTM",
+    "dataset": "FD004",
+    "RMSE": 29.4169,
+    "NASA_Score": 60132.26
+  },
+  {
+    "model": "LSTM_W10",
+    "dataset": "FD001",
+    "RMSE": 41.1287,
+    "NASA_Score": 24611.13
+  },
+  {
+    "model": "LSTM_W10",
+    "dataset": "FD002",
+    "RMSE": 44.3525,
+    "NASA_Score": 94016.92
+  },
+  {
+    "model": "LSTM_W10",
+    "dataset": "FD003",
+    "RMSE": 42.9517,
+    "NASA_Score": 48484.53
+  },
+  {
+    "model": "LSTM_W10",
+    "dataset": "FD004",
+    "RMSE": 45.0881,
+    "NASA_Score": 141903.41
+  },
+  {
+    "model": "LSTM_W20",
+    "dataset": "FD001",
+    "RMSE": 20.1175,
+    "NASA_Score": 2028.24
+  },
+  {
+    "model": "LSTM_W20",
+    "dataset": "FD002",
+    "RMSE": 43.8715,
+    "NASA_Score": 76682.42
+  },
+  {
+    "model": "LSTM_W20",
+    "dataset": "FD003",
+    "RMSE": 20.201,
+    "NASA_Score": 1079.29
+  },
+  {
+    "model": "LSTM_W20",
+    "dataset": "FD004",
+    "RMSE": 44.2254,
+    "NASA_Score": 103525.66
+  },
+  {
+    "model": "LSTM_W50",
+    "dataset": "FD001",
+    "RMSE": 19.7269,
+    "NASA_Score": 875.37
+  },
+  {
+    "model": "LSTM_W50",
+    "dataset": "FD002",
+    "RMSE": 42.9629,
+    "NASA_Score": 38401.98
+  },
+  {
+    "model": "LSTM_W50",
+    "dataset": "FD003",
+    "RMSE": 17.5419,
+    "NASA_Score": 604.58
+  },
+  {
+    "model": "LSTM_W50",
+    "dataset": "FD004",
+    "RMSE": 43.3913,
+    "NASA_Score": 67246.05
+  },
+  {
+    "model": "LSTM_W30",
+    "dataset": "FD001",
+    "RMSE": 16.4869,
+    "NASA_Score": 444.05
+  },
+  {
+    "model": "LSTM_W30",
+    "dataset": "FD002",
+    "RMSE": 43.4493,
+    "NASA_Score": 61315.27
+  },
+  {
+    "model": "LSTM_W30",
+    "dataset": "FD003",
+    "RMSE": 18.8726,
+    "NASA_Score": 1265.58
+  },
+  {
+    "model": "LSTM_W30",
+    "dataset": "FD004",
+    "RMSE": 43.9834,
+    "NASA_Score": 93165.06
+  }
+]

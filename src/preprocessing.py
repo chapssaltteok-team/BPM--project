@@ -3,7 +3,7 @@ import json
 import warnings
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 
 # numba 있으면 적용(속도업됨)
@@ -99,7 +99,7 @@ class CMAPSSPreprocessor:
         self.clip_rul  = clip_rul
         self.val_ratio = val_ratio
         self.seed      = seed
-        self.scaler    = StandardScaler()
+        self.scaler    = MinMaxScaler()
         self._fitted   = False
 
         #피처 확정
