@@ -1,0 +1,42 @@
+{
+  "drop_sensors": [
+    "sensor_1",
+    "sensor_10",
+    "sensor_19",
+    "sensor_18",
+    "sensor_16",
+    "sensor_5"
+  ],
+  "valid_sensors": [
+    "sensor_2",
+    "sensor_3",
+    "sensor_4",
+    "sensor_6",
+    "sensor_7",
+    "sensor_8",
+    "sensor_9",
+    "sensor_11",
+    "sensor_12",
+    "sensor_13",
+    "sensor_14",
+    "sensor_15",
+    "sensor_17",
+    "sensor_20",
+    "sensor_21"
+  ],
+  "clip_upper": 125,
+  "n_engines_train": 100,
+  "n_engines_test": 100,
+  "life_min": 128,
+  "life_max": 362,
+  "life_mean": 206.3,
+  "rul_le30_count": 3100,
+  "train_shape": [
+    20631,
+    26
+  ],
+  "test_shape": [
+    13096,
+    26
+  ]
+}
