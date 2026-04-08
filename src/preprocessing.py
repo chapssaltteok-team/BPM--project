@@ -3,7 +3,7 @@ import json
 import warnings
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler#StandardScaler
 from sklearn.model_selection import train_test_split
 
 # numba 있으면 적용(속도업됨)
@@ -99,7 +99,7 @@ class CMAPSSPreprocessor:
         self.clip_rul  = clip_rul
         self.val_ratio = val_ratio
         self.seed      = seed
-        self.scaler    = MinMaxScaler()
+        self.scaler    = MinMaxScaler()#StandardScaler()
         self._fitted   = False
 
         #피처 확정
@@ -295,8 +295,8 @@ class CMAPSSPreprocessor:
     #모델별 변환 (static, view 반환)
     @staticmethod
     def to_cnn(X: np.ndarray) -> np.ndarray:
-        """(N, W, F) → (N, F, W)  PyTorch Conv1d 형식"""
-        return np.ascontiguousarray(X.transpose(0, 2, 1))
+        """(N, W, F)<-현재 ////(N, F, W)  PyTorch Conv1d(주석)"""
+        return X #np.ascontiguousarray(X.transpose(0, 2, 1)) #주석은 pytorch전용
 
     @staticmethod
     def to_ml(X: np.ndarray) -> np.ndarray:
@@ -325,11 +325,11 @@ class CMAPSSPreprocessor:
 │  get_train() → X:(N,   {self.W}, {self.n_features})  y:(N,)      float32
 │  get_val()   → X:(Nv,  {self.W}, {self.n_features})  y:(Nv,)     float32
 │  get_test()  → X:(E,   {self.W}, {self.n_features})  y:(E,)      float32
-│  to_cnn(X)   → (N, {self.n_features}, {self.W})                  Conv1d
+│  to_cnn(X)   → (N, {self.W}, {self.n_features})                  1D-CNN(Keras)                   Conv1d
 │  to_ml(X)    → (N, {self.W * self.n_features})                   Ridge/RF
 │  save_all()  → .npy 일괄 저장 (기존 환경 호환)
 └──────────────────────────────────────────────────────┘""")
-
+#328번줄 pytorch 변경시 (N, {self.n_features}, {self.W})                  Conv1d
 
 #단독 실행 시: FD001~FD004 전체 저장
 if __name__ == '__main__':
