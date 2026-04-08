@@ -96,27 +96,99 @@
     "NASA_Score": 67246.05
   },
   {
+    "model": "CNN",
+    "dataset": "FD001",
+    "RMSE": 19.3271,
+    "NASA_Score": 1144.31
+  },
+  {
+    "model": "CNN",
+    "dataset": "FD002",
+    "RMSE": 19.549,
+    "NASA_Score": 2606.17
+  },
+  {
+    "model": "CNN",
+    "dataset": "FD003",
+    "RMSE": 23.3021,
+    "NASA_Score": 3219.73
+  },
+  {
+    "model": "CNN",
+    "dataset": "FD004",
+    "RMSE": 22.0744,
+    "NASA_Score": 4916.58
+  },
+  {
     "model": "LSTM_W30",
     "dataset": "FD001",
-    "RMSE": 16.4869,
-    "NASA_Score": 444.05
+    "RMSE": 15.9572,
+    "NASA_Score": 317.37
   },
   {
     "model": "LSTM_W30",
     "dataset": "FD002",
-    "RMSE": 43.4493,
-    "NASA_Score": 61315.27
+    "RMSE": 43.4512,
+    "NASA_Score": 61384.65
   },
   {
     "model": "LSTM_W30",
     "dataset": "FD003",
-    "RMSE": 18.8726,
-    "NASA_Score": 1265.58
+    "RMSE": 40.5147,
+    "NASA_Score": 23799.11
   },
   {
     "model": "LSTM_W30",
     "dataset": "FD004",
-    "RMSE": 43.9834,
-    "NASA_Score": 93165.06
+    "RMSE": 43.9912,
+    "NASA_Score": 93496.32
+  },
+  {
+    "model": "RF",
+    "dataset": "FD001",
+    "RMSE": 16.8001,
+    "NASA_Score": 712.76
+  },
+  {
+    "model": "RF",
+    "dataset": "FD002",
+    "RMSE": 18.2231,
+    "NASA_Score": 1661.69
+  },
+  {
+    "model": "RF",
+    "dataset": "FD003",
+    "RMSE": 17.1068,
+    "NASA_Score": 899.1
+  },
+  {
+    "model": "RF",
+    "dataset": "FD004",
+    "RMSE": 20.5914,
+    "NASA_Score": 2864.25
+  },
+  {
+    "model": "Ridge",
+    "dataset": "FD001",
+    "RMSE": 14.7371,
+    "NASA_Score": 373.08
+  },
+  {
+    "model": "Ridge",
+    "dataset": "FD002",
+    "RMSE": 24.8245,
+    "NASA_Score": 81340.16
+  },
+  {
+    "model": "Ridge",
+    "dataset": "FD003",
+    "RMSE": 16.3135,
+    "NASA_Score": 493.23
+  },
+  {
+    "model": "Ridge",
+    "dataset": "FD004",
+    "RMSE": 32.7817,
+    "NASA_Score": 160841.62
   }
 ]

@@ -1,0 +1,142 @@
+{
+  "FD001": {
+    "feature_cols": [
+      "sensor_2",
+      "sensor_3",
+      "sensor_4",
+      "sensor_6",
+      "sensor_7",
+      "sensor_8",
+      "sensor_9",
+      "sensor_11",
+      "sensor_12",
+      "sensor_13",
+      "sensor_14",
+      "sensor_15",
+      "sensor_17",
+      "sensor_20",
+      "sensor_21",
+      "op_1",
+      "op_2"
+    ],
+    "n_features": 17,
+    "drop_sensors": [
+      "op_3",
+      "sensor_1",
+      "sensor_10",
+      "sensor_16",
+      "sensor_18",
+      "sensor_19",
+      "sensor_5"
+    ],
+    "W": 30,
+    "clip_rul": 125,
+    "val_ratio": 0.2,
+    "seed": 42
+  },
+  "FD002": {
+    "feature_cols": [
+      "sensor_2",
+      "sensor_3",
+      "sensor_4",
+      "sensor_6",
+      "sensor_7",
+      "sensor_8",
+      "sensor_9",
+      "sensor_11",
+      "sensor_12",
+      "sensor_13",
+      "sensor_14",
+      "sensor_15",
+      "sensor_17",
+      "sensor_20",
+      "sensor_21",
+      "op_1",
+      "op_2",
+      "op_3"
+    ],
+    "n_features": 18,
+    "drop_sensors": [
+      "sensor_1",
+      "sensor_10",
+      "sensor_16",
+      "sensor_18",
+      "sensor_19",
+      "sensor_5"
+    ],
+    "W": 30,
+    "clip_rul": 125,
+    "val_ratio": 0.2,
+    "seed": 42
+  },
+  "FD003": {
+    "feature_cols": [
+      "sensor_2",
+      "sensor_3",
+      "sensor_4",
+      "sensor_6",
+      "sensor_7",
+      "sensor_8",
+      "sensor_9",
+      "sensor_11",
+      "sensor_12",
+      "sensor_13",
+      "sensor_14",
+      "sensor_15",
+      "sensor_17",
+      "sensor_20",
+      "sensor_21",
+      "op_1",
+      "op_2"
+    ],
+    "n_features": 17,
+    "drop_sensors": [
+      "op_3",
+      "sensor_1",
+      "sensor_10",
+      "sensor_16",
+      "sensor_18",
+      "sensor_19",
+      "sensor_5"
+    ],
+    "W": 30,
+    "clip_rul": 125,
+    "val_ratio": 0.2,
+    "seed": 42
+  },
+  "FD004": {
+    "feature_cols": [
+      "sensor_2",
+      "sensor_3",
+      "sensor_4",
+      "sensor_6",
+      "sensor_7",
+      "sensor_8",
+      "sensor_9",
+      "sensor_11",
+      "sensor_12",
+      "sensor_13",
+      "sensor_14",
+      "sensor_15",
+      "sensor_17",
+      "sensor_20",
+      "sensor_21",
+      "op_1",
+      "op_2",
+      "op_3"
+    ],
+    "n_features": 18,
+    "drop_sensors": [
+      "sensor_1",
+      "sensor_10",
+      "sensor_16",
+      "sensor_18",
+      "sensor_19",
+      "sensor_5"
+    ],
+    "W": 30,
+    "clip_rul": 125,
+    "val_ratio": 0.2,
+    "seed": 42
+  }
+}

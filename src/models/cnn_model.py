@@ -2,14 +2,18 @@
 cnn_model.py
 ============
 1D-CNN 기반 RUL 예측
-담당: 안성민
+담당: 안성민 / 김규원
 
-입력 데이터: X_train_seq (N, 30, F) → to_cnn() → (N, F, 30)
+입력 데이터: X_train_seq (N, 30, F) → transpose → (N, F, 30)
 이유: PyTorch Conv1d 입력 형식 = (N, 채널, 길이)
      F(피처)를 채널로, 30(타임스텝)을 길이로 해석
+
+실험:
+    Exp-1  num_filters=64, 4개 데이터셋 비교 (H2, H3)
+    Exp-3  num_filters = 32 / 64 / 128, FD001 고정 (H2, H3 재검증)
 """
 import numpy as np
-import os, sys
+import os, sys, time, random
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 import torch
@@ -23,44 +27,71 @@ OUTPUT_DIR = 'outputs/predictions'
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+SEED   = 42
+
+
+# ── Seed 고정 ─────────────────────────────────────────────────────────────────
+def set_seed(seed: int = SEED):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+
+# ── Ridge RMSE 로드 ───────────────────────────────────────────────────────────
+def load_ridge_rmse(dataset: str) -> float | None:
+    import json
+    path = os.path.join('results', 'scores.json')
+    if not os.path.isfile(path):
+        return None
+    with open(path, 'r', encoding='utf-8') as f:
+        content = f.read().strip()
+        data = json.loads(content) if content else []
+    for d in data:
+        if d['model'] == 'Ridge' and d['dataset'] == dataset:
+            return d['RMSE']
+    return None
 
 
 # ── 모델 정의 ─────────────────────────────────────────────────────────────────
 class CNNModel(nn.Module):
     """
-    1D-CNN: Conv1d → BN → ReLU → Conv1d → BN → ReLU → GAP → FC
-    input : (N, F, 30)  [channels_first]
+    1D-CNN: Conv1d → BN → ReLU → Dropout → Conv1d → BN → ReLU → Dropout
+            → GAP → FC
+    input : (N, F, W)  [channels_first]
     output: (N,)
     """
     def __init__(self, in_channels: int, num_filters: int = 64,
                  dropout: float = 0.2):
         super().__init__()
         self.conv_block = nn.Sequential(
-            # 1차 합성곱
             nn.Conv1d(in_channels, num_filters, kernel_size=3, padding=1),
             nn.BatchNorm1d(num_filters),
             nn.ReLU(),
             nn.Dropout(dropout),
-            # 2차 합성곱
             nn.Conv1d(num_filters, num_filters * 2, kernel_size=3, padding=1),
             nn.BatchNorm1d(num_filters * 2),
             nn.ReLU(),
             nn.Dropout(dropout),
         )
-        # Global Average Pooling → 타임스텝 차원 제거
         self.gap = nn.AdaptiveAvgPool1d(1)
         self.fc  = nn.Linear(num_filters * 2, 1)
 
-    def forward(self, x):                    # x: (N, F, 30)
-        x = self.conv_block(x)               # (N, num_filters*2, 30)
+    def forward(self, x):                    # (N, F, W)
+        x = self.conv_block(x)               # (N, num_filters*2, W)
         x = self.gap(x).squeeze(-1)          # (N, num_filters*2)
         return self.fc(x).squeeze(-1)        # (N,)
 
 
-# ── 데이터 로드 + CNN 형식 변환 ───────────────────────────────────────────────
+def count_params(model: nn.Module) -> int:
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
+# ── 데이터 로드 ───────────────────────────────────────────────────────────────
 def load_data(dataset: str):
     base = os.path.join(DATA_DIR, dataset)
-    X_tr = np.load(f'{base}/X_train_seq.npy').transpose(0, 2, 1)  # (N,F,30)
+    X_tr = np.load(f'{base}/X_train_seq.npy').transpose(0, 2, 1)  # (N,F,W)
     X_vl = np.load(f'{base}/X_val_seq.npy').transpose(0, 2, 1)
     X_te = np.load(f'{base}/X_test_seq.npy').transpose(0, 2, 1)
     y_tr = np.load(f'{base}/y_train_seq.npy')
@@ -76,35 +107,42 @@ def to_tensor(*arrays):
 # ── 학습 ──────────────────────────────────────────────────────────────────────
 def train_cnn(dataset: str,
               num_filters: int = 64,
+              tag: str         = '',
               epochs: int      = 100,
               batch_size: int  = 256,
               lr: float        = 1e-3,
               dropout: float   = 0.2,
-              patience: int    = 15):
+              patience: int    = 15) -> tuple:
 
-    print(f"\n{'='*50}\n  1D-CNN — {dataset}\n{'='*50}")
+    set_seed(SEED)
+    label = f'F{num_filters}' if tag == 'Exp3' else ''
+    print(f"\n{'='*50}\n  1D-CNN — {dataset}"
+          f"{f' (filters={num_filters})' if label else ''}\n{'='*50}")
+
     X_tr, y_tr, X_vl, y_vl, X_te, y_te = load_data(dataset)
-
-    X_tr_t, y_tr_t, X_vl_t, y_vl_t, X_te_t = to_tensor(X_tr, y_tr, X_vl, y_vl, X_te)
+    X_tr_t, y_tr_t, X_vl_t, y_vl_t, X_te_t = to_tensor(
+        X_tr, y_tr, X_vl, y_vl, X_te)
 
     train_loader = DataLoader(TensorDataset(X_tr_t, y_tr_t),
                               batch_size=batch_size, shuffle=True)
     val_loader   = DataLoader(TensorDataset(X_vl_t, y_vl_t),
                               batch_size=batch_size)
 
-    in_channels = X_tr.shape[1]  # F
+    in_channels = X_tr.shape[1]
     model       = CNNModel(in_channels=in_channels,
                            num_filters=num_filters,
                            dropout=dropout).to(DEVICE)
     optimizer   = torch.optim.Adam(model.parameters(), lr=lr)
     scheduler   = torch.optim.lr_scheduler.ReduceLROnPlateau(
-                      optimizer, patience=5, factor=0.5, verbose=True)
+                      optimizer, patience=5, factor=0.5)
     criterion   = nn.MSELoss()
+
+    n_params = count_params(model)
+    print(f"  파라미터 수: {n_params:,}")
 
     best_val, patience_cnt, best_state = float('inf'), 0, None
 
     for epoch in range(1, epochs + 1):
-        # train
         model.train()
         for xb, yb in train_loader:
             xb, yb = xb.to(DEVICE), yb.to(DEVICE)
@@ -113,7 +151,6 @@ def train_cnn(dataset: str,
             loss.backward()
             optimizer.step()
 
-        # validation
         model.eval()
         val_losses = []
         with torch.no_grad():
@@ -126,7 +163,6 @@ def train_cnn(dataset: str,
         if epoch % 10 == 0:
             print(f"  Epoch {epoch:3d} | Val Loss: {val_loss:.4f}")
 
-        # Early Stopping
         if val_loss < best_val:
             best_val     = val_loss
             patience_cnt = 0
@@ -137,25 +173,59 @@ def train_cnn(dataset: str,
                 print(f"  Early Stopping at epoch {epoch}")
                 break
 
-    # ── 최종 예측 ────────────────────────────────────────
+    # ── 추론 시간 측정 ───────────────────────────────────
     model.load_state_dict(best_state)
     model.eval()
+    single   = X_te_t[:1].to(DEVICE)
+    n_repeat = 1000
+
+    with torch.no_grad():
+        for _ in range(10):
+            _ = model(single)
+        start = time.time()
+        for _ in range(n_repeat):
+            _ = model(single)
+        inference_ms = (time.time() - start) / n_repeat * 1000
+
+    print(f"  추론 속도: {inference_ms:.4f} ms/sample ({n_repeat}회 평균)")
+
+    # ── 최종 예측 ────────────────────────────────────────
     with torch.no_grad():
         pred = model(X_te_t.to(DEVICE)).cpu().numpy()
     pred = np.clip(pred, 0, 125)
 
     # ── 저장 ─────────────────────────────────────────────
-    out_path = os.path.join(OUTPUT_DIR, f'cnn_{dataset}.npy')
+    fname    = f'cnn_F{num_filters}_{dataset}.npy' if tag == 'Exp3' \
+               else f'cnn_{dataset}.npy'
+    out_path = os.path.join(OUTPUT_DIR, fname)
     np.save(out_path, pred)
     print(f"  예측 저장: {out_path}")
 
     # ── 평가 ─────────────────────────────────────────────
-    evaluate_all(y_te, pred, model_name='CNN', dataset=dataset)
+    model_name = f'CNN_F{num_filters}' if tag == 'Exp3' else 'CNN'
+    rmse_ridge = load_ridge_rmse(dataset)
+    if rmse_ridge is None:
+        print("  ⚠ Ridge RMSE 미확인 → 성능 밀도 미산출")
+
+    evaluate_all(y_te, pred,
+                 model_name=model_name,
+                 dataset=dataset,
+                 inference_ms=inference_ms,
+                 n_params=n_params,
+                 rmse_ridge=rmse_ridge)
 
     return model, pred
 
 
 if __name__ == '__main__':
+    # ── Exp-1: 기본 실험 (num_filters=64, 4개 데이터셋) ──
+    print("\n" + "★"*20 + "  Exp-1: 기본 실험 (filters=64)  " + "★"*20)
     for ds in DATASETS:
-        train_cnn(ds)
-    print("\n모든 데이터셋 1D-CNN 완료")
+        train_cnn(ds, num_filters=64)
+
+    # ── Exp-3: H2·H3 재검증 — 커널(필터) 수 실험 (FD001) ─
+    print("\n" + "★"*20 + "  Exp-3: 필터 수 실험 (FD001)  " + "★"*20)
+    for f in [32, 64, 128]:
+        train_cnn('FD001', num_filters=f, tag='Exp3')
+
+    print("\n모든 1D-CNN 실험 완료")
