@@ -19,7 +19,10 @@ except ImportError:
     )
 
 #경로 
-DATA_DIR    = '../CMAPSSData'
+import os
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# src/preprocessing.py 기준 → 두 단계 위 = BPM--PROJECT/
+data_dir = os.path.join(BASE_DIR, 'CMAPSSData')
 RESULTS_DIR = 'results'
 
 #EDA 확정 파라미터 
@@ -88,9 +91,9 @@ class CMAPSSPreprocessor:
                  val_ratio=0.2, seed=42, extra_drop=None):
         if dataset not in self.VALID_DS:
             raise ValueError(f"dataset은 {self.VALID_DS} 중 하나여야 합니다.")
-        if not os.path.isdir(DATA_DIR):
+        if not os.path.isdir(data_dir):
             raise FileNotFoundError(
-                f"'{DATA_DIR}/' 폴더가 없습니다. "
+                f"'{data_dir}/' 폴더가 없습니다. "
                 "CMAPSSData 폴더를 프로젝트 루트에 놓으세요."
             )
 
