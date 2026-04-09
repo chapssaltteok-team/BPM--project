@@ -133,7 +133,7 @@ class CMAPSSPreprocessor:
 
     # 내부 유틸
     def _load_raw(self, split: str) -> pd.DataFrame:
-        path = os.path.join(DATA_DIR, f'{split}_{self.dataset}.txt')
+        path = os.path.join(data_dir, f'{split}_{self.dataset}.txt')
         return pd.read_csv(
             path, sep=r'\s+', header=None, names=ALL_COLS,
             dtype={c: 'float32' for c in ALL_COLS if c != 'engine_id'},
@@ -223,7 +223,7 @@ class CMAPSSPreprocessor:
             raise RuntimeError("get_train()을 먼저 호출하세요.")
 
         df_test  = self._load_raw('test')
-        rul_path = os.path.join(DATA_DIR, f'RUL_{self.dataset}.txt')
+        rul_path = os.path.join(data_dir, f'RUL_{self.dataset}.txt')
         true_rul = (
             pd.read_csv(rul_path, header=None, names=['RUL'])['RUL']
             .clip(upper=self.clip_rul)

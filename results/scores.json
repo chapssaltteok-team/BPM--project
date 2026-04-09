@@ -190,5 +190,57 @@
     "dataset": "FD004",
     "RMSE": 32.7817,
     "NASA_Score": 160841.62
+  },
+  {
+    "model": "E2E_Ridge",
+    "dataset": "FD001",
+    "RMSE": 14.7371,
+    "MAE": 11.9519,
+    "R2": 0.8648,
+    "NASA_Score": 373.08,
+    "inference_ms": 0.5106,
+    "n_params": 511
+  },
+  {
+    "model": "E2E_RF",
+    "dataset": "FD001",
+    "RMSE": 16.8001,
+    "MAE": 12.575,
+    "R2": 0.8242,
+    "NASA_Score": 712.76,
+    "inference_ms": 52.3776,
+    "n_params": 1091238,
+    "performance_density": -0.018905
+  },
+  {
+    "model": "E2E_LSTM",
+    "dataset": "FD001",
+    "RMSE": 15.9572,
+    "MAE": 12.5939,
+    "R2": 0.8414,
+    "NASA_Score": 317.37,
+    "inference_ms": 1.9106,
+    "n_params": 21313,
+    "performance_density": -0.572432
+  },
+  {
+    "model": "E2E_CNN",
+    "dataset": "FD001",
+    "RMSE": 19.3271,
+    "MAE": 14.4844,
+    "R2": 0.7674,
+    "NASA_Score": 1144.31,
+    "inference_ms": 0.7765,
+    "n_params": 28545,
+    "performance_density": -1.607967
+  },
+  {
+    "model": "E2E_Ensemble",
+    "dataset": "FD001",
+    "RMSE": 14.8401,
+    "MAE": 11.5792,
+    "R2": 0.8629,
+    "NASA_Score": 371.03,
+    "inference_ms": 55.5752
   }
 ]
