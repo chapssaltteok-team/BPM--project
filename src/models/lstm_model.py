@@ -113,6 +113,7 @@ def train_lstm(dataset: str,
                tag: str        = '',
                hidden_size: int = 64,
                num_layers: int  = 1,
+               dropout: float   = 0.2,
                epochs: int      = 50,
                batch_size: int  = 256,
                lr: float        = 1e-3,
@@ -132,7 +133,8 @@ def train_lstm(dataset: str,
 
     model     = LSTMModel(input_size=X_tr.shape[2],
                           hidden_size=hidden_size,
-                          num_layers=num_layers).to(DEVICE)
+                          num_layers=num_layers,
+                          dropout=dropout).to(DEVICE)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = nn.MSELoss()
 
@@ -217,13 +219,30 @@ def train_lstm(dataset: str,
 
 if __name__ == '__main__':
     # ── Exp-1: 기본 실험 W=30, 4개 데이터셋 ─────────────
-    print("\n" + "★"*20 + "  Exp-1: 기본 실험 (W=30)  " + "★"*20)
-    for ds in DATASETS:
-        train_lstm(ds, window_size=30)
+    # print("\n" + "★"*20 + "  Exp-1: 기본 실험 (W=30)  " + "★"*20)
+    # for ds in DATASETS:
+    #    train_lstm(ds, window_size=30)
 
     # ── Exp-2: H1 검증 — W 크기 실험 (FD001 고정) ────────
-    print("\n" + "★"*20 + "  Exp-2: 슬라이딩 윈도우 실험 (FD001)  " + "★"*20)
-    for w in [10, 20, 30, 50]:
-        train_lstm('FD001', window_size=w, tag='Exp2')
+    # print("\n" + "★"*20 + "  Exp-2: 슬라이딩 윈도우 실험 (FD001)  " + "★"*20)
+    # for w in [10, 20, 30, 50]:
+    #    train_lstm('FD001', window_size=w, tag='Exp2')
 
+    # ── 하이퍼파라미터 튜닝 ──────────────────────────────
+    # v1: h=128, l=2, lr=5e-4, ep=50                → FD001 RMSE 40.28 (발산)
+    # v2: h=128, l=2, lr=5e-4, ep=100               → FD001 RMSE 40.33 (발산)
+    # v3: h=128, l=1, lr=1e-3, ep=100               → FD001 RMSE 14.17 ✓ 최적
+    # v4: h=128, l=2, lr=1e-3, d=0.3, ep=100        → FD001 RMSE 14.85 (2층 효과 미미)
+    # v5: h=256, l=1, lr=1e-3, ep=100               → hidden 확장 효과 검증 / FD003 RMSE 14.50 (hidden=256에서 2가지 고장패턴 구분)
+    # v6: h=256, l=2, lr=1e-3, d=0.3, ep=100        → 복합 조건 공략 시도
+    print("\n" + "★"*20 + "하이퍼파라미터 튜닝" + "★"*20)
+    for ds in DATASETS:
+        train_lstm(ds,
+                   hidden_size=256,
+                   num_layers=2,
+                   lr=1e-3,
+                   dropout=0.3,
+                   epochs=100,
+                   patience=15,
+                   tag='h256_l2_d3')
     print("\n모든 LSTM 실험 완료")
